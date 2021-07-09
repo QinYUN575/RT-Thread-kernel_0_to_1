@@ -76,14 +76,17 @@ void flag1_thread_entry(void *arg)
 
 void flag2_thread_entry(void *arg)
 {
-
+    rt_base_t level2;
     for (;;)
     {
+        level2 = rt_hw_interrupt_disable();
+//        flag1 = 3;
         flag2 = 1;
         delay(100);
+//        flag1 = 4;
         flag2 = 0;
         delay(100);
-
+        rt_hw_interrupt_enable(level2);
         rt_schedule();
     }
 }

@@ -21,6 +21,26 @@ NVIC_PENDSVSET      EQU     0x10000000  ; 触发 PendSV exception 的值
     REQUIRE8
     PRESERVE8
 
+;/**
+; * rt_bast_t rt_hw_interrupt_disable(void)
+; */
+rt_hw_interrupt_disable PROC
+    EXPORT rt_hw_interrupt_disable
+    MRS     r0, PRIMASK
+    CPSID   I
+    BX      LR
+    ENDP
+
+;/**
+; * void rt_hw_interrupt_enable(rt_base_t level)
+; */
+rt_hw_interrupt_enable PROC
+    EXPORT rt_hw_interrupt_enable
+    MSR     PRIMASK, r0
+    BX      LR
+    ENDP
+
+
 rt_hw_context_switch_to    PROC
 
     ; 导出 rt_hw_context_switch_to，让其具有全局属性，可以在 C 文件调用
@@ -147,6 +167,7 @@ pendsv_exit
     BX      lr                                      ; 异常返回，这个时候任务堆栈中的剩下内容将会自动加载到 xPSR，PC（任务入口地址），R14，R12，R3，R2，R1，R0（任务的形参）
 
     ENDP
+
     ALIGN   4
 
     END

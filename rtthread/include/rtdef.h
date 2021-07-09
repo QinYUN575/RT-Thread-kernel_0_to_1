@@ -78,10 +78,32 @@ typedef rt_base_t           rt_off_t;
 #define RT_EINTR            9   /**< interrupted system call */
 #define RT_EINVAL           10  /**< Inval argument */
 
-
+/**
+ * @ingroup BasicDef
+ *
+ * @def RT_ALIGN(size, align)
+ * Return the most contiguous size aligned at specified width.
+ * RT_ALIGN(13, 4) would return 16.
+ *
+ */
 #define RT_ALIGN(size, align)           (((size) + (align)-1) & ~((align)-1))
+
+/**
+ * @ingroup BasicDef
+ *
+ * @def RT_ALIGN_DOWN(size, align)
+ * Return the down number of aligned of aligned at specified width.
+ * RT_ALIGN_DOWN(13, 4) would return 12.
+ *
+ */
 #define RT_ALIGN_DOWN(size, align)      ((size) & ~((align)-1))
 
+/**
+ * @ingroup BasicDef
+ *
+ * @def RT_NULL
+ * Similar as the NULL is C library.
+ */
 #define RT_NULL                         (0)
 
 

@@ -11,9 +11,11 @@
 #ifndef __RT_THREAD_H__
 #define __RT_THREAD_H__
 
+#include <rthw.h>
 #include <rtdef.h>
 #include <rtconfig.h>
 #include <rtservice.h>
+
 
 #ifdef __cplusplus
 extern "C"
