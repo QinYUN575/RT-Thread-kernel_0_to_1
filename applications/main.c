@@ -38,6 +38,7 @@ int main(void)
     rt_system_scheduler_init();
 
     rt_thread_init(&rt_flag1_thread,
+                   "thread1",
                    flag1_thread_entry,
                    RT_NULL,                        /* 线程形参 */
                    &rt_flag1_thread_stack[0],      /* 线程栈起始地址 */
@@ -46,6 +47,7 @@ int main(void)
     rt_list_insert_before(&(rt_thread_priority_table[0]), &(rt_flag1_thread.tlist));
 
     rt_thread_init(&rt_flag2_thread,
+                   "thread2",
                    flag2_thread_entry,
                    RT_NULL,                        /* 线程形参 */
                    &rt_flag2_thread_stack[0],      /* 线程栈起始地址 */

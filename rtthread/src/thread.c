@@ -23,11 +23,14 @@
  * @return rt_err_t
  */
 rt_err_t rt_thread_init(struct rt_thread *thread,
+                        const char *name,
                         void (*entry)(void *parameter),
                         void *parameter,
                         void *stack_start,
                         rt_uint32_t stack_size)
 {
+    /* initialize thread object */
+    rt_object_init((rt_object_t)thread, RT_Object_Class_Thread, name);
     rt_list_init(&(thread->tlist));
 
     thread->entry = (void *)entry;

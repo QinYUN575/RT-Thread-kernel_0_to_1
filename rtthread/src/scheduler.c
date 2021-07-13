@@ -15,6 +15,9 @@ struct rt_thread *rt_current_thread;
 
 rt_list_t rt_thread_priority_table[RT_THREAD_PRIORITY_MAX];
 
+
+static rt_int16_t rt_scheduler_lock_nest;
+
 void rt_system_scheduler_init(void)
 {
     register rt_base_t offset;
@@ -64,4 +67,62 @@ void rt_schedule(void)
     }
 
     rt_hw_context_switch((rt_uint32_t)&from_thread->sp, (rt_uint32_t)&to_thread->sp);
+}
+
+/**
+ * @brief The function will lock the thread scheduler.
+ */
+void rt_enter_critical(void)
+{
+    register rt_base_t level;
+
+    /* disable interrupt */
+    level = rt_hw_interrupt_disable();
+
+    /**
+     * the maximal number of nest is RT_INT16_MAX, which is big enough and does
+     * not check here.
+     */
+    rt_scheduler_lock_nest++;
+
+    /* enable interrupt */
+    rt_hw_interrupt_enable(level);
+}
+
+/**
+ * @brief The function will unlock the thread scheduler.
+ */
+void rt_exit_critical(void)
+{
+    register rt_base_t level;
+
+    /* disable interrupt */
+    level = rt_hw_interrupt_disable();
+
+    rt_scheduler_lock_nest--;
+    if (rt_scheduler_lock_nest <= 0)
+    {
+        rt_scheduler_lock_nest = 0;
+        /* enable interrupt */
+        rt_hw_interrupt_enable(level);
+
+        if (rt_current_thread)
+        {
+            /* if scheduler is started, do a scheduler. */
+            rt_schedule();
+        }
+    }
+
+    /* enable interrupt */
+    rt_hw_interrupt_enable(level);
+}
+
+/**
+ * @brief Get the scheduler lock level
+ *
+ * @return the level of the scheduler lock. 0 means unlocked.
+ */
+rt_int16_t rt_critical_level(void)
+{
+    return rt_scheduler_lock_nest;
 }

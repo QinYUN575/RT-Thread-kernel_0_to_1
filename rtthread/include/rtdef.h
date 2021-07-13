@@ -92,7 +92,7 @@ typedef rt_base_t           rt_off_t;
  * @ingroup BasicDef
  *
  * @def RT_ALIGN_DOWN(size, align)
- * Return the down number of aligned of aligned at specified width.
+ * Return the down number of aligned at specified width.
  * RT_ALIGN_DOWN(13, 4) would return 12.
  *
  */
@@ -102,7 +102,7 @@ typedef rt_base_t           rt_off_t;
  * @ingroup BasicDef
  *
  * @def RT_NULL
- * Similar as the NULL is C library.
+ * Similar as the NULL in C library.
  */
 #define RT_NULL                         (0)
 
@@ -118,18 +118,92 @@ struct rt_list_node
 typedef struct rt_list_node rt_list_t;
 
 /**
+ * Kernel object macros
+ */
+
+/**
+ * Base structure of Kernel object
+ */
+struct rt_object
+{
+    char name[RT_NAME_MAX]; /**< name of kernel object */
+    rt_uint8_t type;        /**< type of kernel object */
+    rt_uint8_t flag;        /**< flag of kernel object */
+
+    rt_list_t list;         /**< list node of kernel object */
+};
+typedef struct rt_object *rt_object_t;  /**< Type for kernel objects. */
+
+/**
+ * The object type can be one of the follows with specific
+ * macros enabled:
+ * - Thread
+ * - Semaphore
+ * - Mutex
+ * - Event
+ * - MailBox
+ * - MessageQueue
+ * - MemHeap
+ * - MemPool
+ * - Device
+ * - Timer
+ * - UnKnown
+ * - Static
+ */
+enum rt_object_class_type
+{
+    RT_Object_Class_Null            = 0x00,     /**< The object is not used. */
+    RT_Object_Class_Thread          = 0x01,     /**< The object is a thread. */
+    RT_Object_Class_Semaphore       = 0x02,     /**< The object is a semaphore. */
+    RT_Object_Class_Mutex           = 0x03,     /**< The object is a mutex. */
+    RT_Object_Class_Event           = 0x04,     /**< The object is a event. */
+    RT_Object_Class_MailBox         = 0x05,     /**< The object is a mail box. */
+    RT_Object_Class_MessageQueue    = 0x06,     /**< The object is a message queue. */
+    RT_Object_Class_MemHeap         = 0x07,     /**< The object is a memory heap. */
+    RT_Object_Class_MemPool         = 0x08,     /**< The object is a memory pool. */
+    RT_Object_Class_Device          = 0x09,     /**< The object is a device. */
+    RT_Object_Class_Timer           = 0x0A,     /**< The object is a timer. */
+    RT_Object_Class_Unknown         = 0x0B,     /**< The object is unknown. */
+    RT_Object_Class_Static          = 0x80      /**< The object is a static object. */
+};
+
+/**
+ * The information of the kernel object
+ */
+struct rt_object_information
+{
+    enum rt_object_class_type type; /**< object class type */
+    rt_list_t   object_list;        /**< object list */
+    rt_size_t   object_size;        /**< object size */
+};
+
+/**
+ * Timer structure
+ */
+struct rt_timer
+{
+    struct rt_object parent;
+};
+typedef struct rt_timer *rt_timer_t;
+
+/**
  * Thread structure
  */
 struct rt_thread
 {
-    rt_list_t tlist; /**< the thread list */
+    char name[RT_NAME_MAX];         /**< name of kernel object */
+    rt_uint8_t type;                /**< type of kernel object */
+    rt_uint8_t flags;               /**< flags of kernel object */
+    rt_list_t list;                 /**< list node of kernel object */
+
+    rt_list_t tlist;                /**< the thread list */
 
     /* stack point and entry */
-    void *sp;               /**< stack point */
-    void *entry;            /**< entry */
-    void *parameter;        /**< parameter */
-    void *stack_addr;       /**< stack address */
-    rt_uint32_t stack_size; /**< stack size */
+    void *sp;                       /**< stack point */
+    void *entry;                    /**< entry */
+    void *parameter;                /**< parameter */
+    void *stack_addr;               /**< stack address */
+    rt_uint32_t stack_size;         /**< stack size */
 };
 typedef struct rt_thread *rt_thread_t;
 
