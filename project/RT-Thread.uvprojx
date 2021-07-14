@@ -428,6 +428,21 @@
               <FileType>1</FileType>
               <FilePath>..\rtthread\src\object.c</FilePath>
             </File>
+            <File>
+              <FileName>clock.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\rtthread\src\clock.c</FilePath>
+            </File>
+            <File>
+              <FileName>idle.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\rtthread\src\idle.c</FilePath>
+            </File>
+            <File>
+              <FileName>irq.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\rtthread\src\irq.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

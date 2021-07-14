@@ -204,6 +204,8 @@ struct rt_thread
     void *parameter;                /**< parameter */
     void *stack_addr;               /**< stack address */
     rt_uint32_t stack_size;         /**< stack size */
+
+    rt_ubase_t remaining_tick;      /**< remaining tick */
 };
 typedef struct rt_thread *rt_thread_t;
 

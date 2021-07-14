@@ -9,9 +9,8 @@
  *
  */
 
-#include <rtdef.h>
+#include <rthw.h>
 #include <rtthread.h>
-#include <rtservice.h>
 #include "ARMCM3.h"
 
 rt_uint8_t flag1;
@@ -35,7 +34,12 @@ void delay(uint32_t count);
 
 int main(void)
 {
+    rt_hw_interrupt_disable();
+    SysTick_Config(SystemCoreClock / RT_TICK_PER_SECOND);
+
     rt_system_scheduler_init();
+
+    rt_thread_idle_init();
 
     rt_thread_init(&rt_flag1_thread,
                    "thread1",
@@ -67,10 +71,17 @@ void flag1_thread_entry(void *arg)
 {
     for (;;)
     {
+#if 0
         flag1 = 1;
         delay(100);
         flag1 = 0;
         delay(100);
+#else
+        flag1 = 1;
+        rt_thread_delay(2);
+        flag1 = 0;
+        rt_thread_delay(2);
+#endif
 
         rt_schedule();
     }
@@ -78,9 +89,10 @@ void flag1_thread_entry(void *arg)
 
 void flag2_thread_entry(void *arg)
 {
-    rt_base_t level2;
+    // rt_base_t level2;
     for (;;)
     {
+#if 0
         level2 = rt_hw_interrupt_disable();
 //        flag1 = 3;
         flag2 = 1;
@@ -89,6 +101,22 @@ void flag2_thread_entry(void *arg)
         flag2 = 0;
         delay(100);
         rt_hw_interrupt_enable(level2);
+#else
+    flag2 = 1;
+    rt_thread_delay(2);
+    flag2 = 0;
+    rt_thread_delay(2);
+#endif
         rt_schedule();
     }
+}
+
+
+void SysTick_Handler(void)
+{
+    rt_interrupt_enter();
+
+    rt_tick_increase();
+
+    rt_interrupt_leave();
 }
