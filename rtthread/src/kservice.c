@@ -43,7 +43,7 @@ char *rt_strncpy(char *dst, const char *src, rt_ubase_t n)
     return (dst);
 }
 
-#if RT_USING_CPU_FFS
+#ifndef RT_USING_CPU_FFS
 const rt_uint8_t __lowest_bit_bitmap[] = {
     0, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, /**< 0x00 */
     4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0, /**< 0x10 */

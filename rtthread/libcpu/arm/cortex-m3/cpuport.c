@@ -81,3 +81,20 @@ rt_uint8_t *rt_hw_stack_init(void *tentry,
 
     return stk;
 }
+
+#ifdef RT_USING_CPU_FFS
+#if defined(__CC_ARM)
+__asm int __rt_ffs(int value)
+{
+    CMP     r0, #0x00
+    BEQ     exit
+
+    RBIT    r0, r0
+    CLZ     r0, r0
+    ADDS    r0, r0, #0x01
+
+exit
+    BX      lr
+}
+#endif
+#endif
