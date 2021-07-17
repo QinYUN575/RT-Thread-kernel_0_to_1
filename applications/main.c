@@ -16,7 +16,6 @@
 rt_uint8_t flag1;
 rt_uint8_t flag2;
 
-extern rt_list_t rt_thread_priority_table[RT_THREAD_PRIORITY_MAX];
 
 struct rt_thread rt_flag1_thread;
 struct rt_thread rt_flag2_thread;
@@ -44,70 +43,52 @@ int main(void)
     rt_thread_init(&rt_flag1_thread,
                    "thread1",
                    flag1_thread_entry,
-                   RT_NULL,                        /* 线程形参 */
-                   &rt_flag1_thread_stack[0],      /* 线程栈起始地址 */
-                   sizeof(rt_flag1_thread_stack)); /* 线程栈大小，单位为字节 */
+                   RT_NULL,                         /* 线程形参 */
+                   &rt_flag1_thread_stack[0],       /* 线程栈起始地址 */
+                   sizeof(rt_flag1_thread_stack),   /* 线程栈大小，单位为字节 */
+                   2);
 
-    rt_list_insert_before(&(rt_thread_priority_table[0]), &(rt_flag1_thread.tlist));
+    // rt_list_insert_before(&(rt_thread_priority_table[0]), &(rt_flag1_thread.tlist));
+    rt_thread_startup(&rt_flag1_thread);
 
     rt_thread_init(&rt_flag2_thread,
                    "thread2",
                    flag2_thread_entry,
-                   RT_NULL,                        /* 线程形参 */
-                   &rt_flag2_thread_stack[0],      /* 线程栈起始地址 */
-                   sizeof(rt_flag2_thread_stack)); /* 线程栈大小，单位为字节 */
-    rt_list_insert_before(&(rt_thread_priority_table[1]), &(rt_flag2_thread.tlist));
-
+                   RT_NULL,                         /* 线程形参 */
+                   &rt_flag2_thread_stack[0],       /* 线程栈起始地址 */
+                   sizeof(rt_flag2_thread_stack),   /* 线程栈大小，单位为字节 */
+                   3);
+    
+    // rt_list_insert_before(&(rt_thread_priority_table[1]), &(rt_flag2_thread.tlist));
+    rt_thread_startup(&rt_flag2_thread);
+    
     rt_system_scheduler_start();
-}
-
-void delay(uint32_t count)
-{
-    for (; count != 0; count--)
-        ;
 }
 
 void flag1_thread_entry(void *arg)
 {
     for (;;)
     {
-#if 0
         flag1 = 1;
-        delay(100);
+        rt_thread_delay(1);
         flag1 = 0;
-        delay(100);
-#else
-        flag1 = 1;
-        rt_thread_delay(2);
-        flag1 = 0;
-        rt_thread_delay(2);
-#endif
-
-        rt_schedule();
+        rt_thread_delay(1);
     }
 }
 
 void flag2_thread_entry(void *arg)
 {
-    // rt_base_t level2;
+    rt_base_t level2;
     for (;;)
     {
-#if 0
-        level2 = rt_hw_interrupt_disable();
-//        flag1 = 3;
         flag2 = 1;
-        delay(100);
-//        flag1 = 4;
-        flag2 = 0;
-        delay(100);
+        level2 = rt_hw_interrupt_disable();
+        // rt_enter_critical();
+        rt_thread_delay(3);
+        // rt_exit_critical();
         rt_hw_interrupt_enable(level2);
-#else
-    flag2 = 1;
-    rt_thread_delay(2);
-    flag2 = 0;
-    rt_thread_delay(2);
-#endif
-        rt_schedule();
+        flag2 = 0;
+        rt_thread_delay(3);
     }
 }
 

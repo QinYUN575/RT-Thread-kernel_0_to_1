@@ -28,13 +28,13 @@ enum rt_object_info_type
     RT_Object_Info_Event,           /**< The object is event. */
 #endif
 #ifdef RT_USING_MAILBOX
-    RT_Object_Info_Mailbox,         /**< The object is mail box. */
+    RT_Object_Info_MailBox,         /**< The object is mail box. */
 #endif
 #ifdef RT_USING_MESSAGEQUEUE
     RT_Object_Info_MessageQueue,    /**< The object is message queue. */
 #endif
 #ifdef RT_USING_MEMHEAP
-    RT_Object_Info_Memheap,         /**< The object is memory heap. */
+    RT_Object_Info_MemHeap,         /**< The object is memory heap. */
 #endif
 #ifdef RT_USING_MEMPOOL
     RT_Object_Info_MemPool,         /**< The object is memory pool. */
@@ -66,7 +66,7 @@ static struct rt_object_information rt_object_container[RT_Object_Info_Unknown] 
 #endif
 #ifdef RT_USING_MAILBOX
     /* initialize object container - mail box. */
-    {RT_Object_Class_Mailbox,        _OBJ_CONTAINER_LIST_INIT(RT_Object_Info_Mailbox),       sizeof(struct rt_mailbox)},
+    {RT_Object_Class_Mailbox,        _OBJ_CONTAINER_LIST_INIT(RT_Object_Info_MailBox),       sizeof(struct rt_mailbox)},
 #endif
 #ifdef RT_USING_MESSAGEQUEUE
     /* initialize object container - message queue. */
@@ -74,7 +74,7 @@ static struct rt_object_information rt_object_container[RT_Object_Info_Unknown] 
 #endif
 #ifdef RT_USING_MEMHEAP
     /* initialize object container - memory heap. */
-    {RT_Object_Class_Memheap,        _OBJ_CONTAINER_LIST_INIT(RT_Object_Info_Memheap),       sizeof(struct rt_memheap)},
+    {RT_Object_Class_Memheap,        _OBJ_CONTAINER_LIST_INIT(RT_Object_Info_MemHeap),       sizeof(struct rt_memheap)},
 #endif
 #ifdef RT_USING_MEMPOOL
     /* initialize object container - memory pool. */
@@ -133,27 +133,27 @@ void rt_object_init(struct rt_object            *object,
 
     /* check object type to avoid re-initialization */
 
-    /* enter critical */
-    rt_enter_critical();
-    /* try to find object */
-    for (node = information->object_list.next;
-            node != &(information->object_list);
-            node = node->next)
-    {
-        struct rt_object *obj;
-        obj = rt_list_entry(node, struct rt_object, list);
+    // /* enter critical */
+    // rt_enter_critical();
+    // /* try to find object */
+    // for (node = information->object_list.next;
+    //         node != &(information->object_list);
+    //         node = node->next)
+    // {
+    //     struct rt_object *obj;
+    //     obj = rt_list_entry(node, struct rt_object, list);
 
-        /**
-         * @TODO:
-         *
-         */
-        // if (obj)
-        // {
+    //     /**
+    //      * @TODO:
+    //      *
+    //      */
+    //     // if (obj)
+    //     // {
 
-        // }
-    }
-    /* leave critical */
-    rt_exit_critical();
+    //     // }
+    // }
+    // /* leave critical */
+    // rt_exit_critical();
 
     /* initialize object's paramter */
     /* set object type to static */

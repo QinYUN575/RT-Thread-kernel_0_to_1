@@ -82,6 +82,17 @@ rt_inline void rt_list_remove(rt_list_t *n)
 }
 
 /**
+ * @brief tests whether a list is empty
+ * 
+ * @param l the list to tests
+ * @return result of list is empty
+ */
+rt_inline rt_bool_t rt_list_isempty(rt_list_t *l)
+{
+    return (l->next == l);
+}
+
+/**
  * @brief get the struct for this entry
  * @param node the entry point
  * @param type the type of structure

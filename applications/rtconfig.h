@@ -18,6 +18,8 @@
 
 #define RT_NAME_MAX                 8
 
+#define RT_USING_CPU_FFS            1
+
 // #ifndef __CC_ARM
 // #define __CC_ARM
 // #endif

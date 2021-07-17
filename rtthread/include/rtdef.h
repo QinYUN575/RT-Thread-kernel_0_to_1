@@ -187,6 +187,22 @@ struct rt_timer
 typedef struct rt_timer *rt_timer_t;
 
 /**
+ * Thread state definitions
+ */
+#define RT_THREAD_INIT                  0x00                /**< Initialized status */
+#define RT_THREAD_READY                 0x01                /**< Ready status */
+#define RT_THREAD_SUSPEND               0x02                /**< Suspend status */
+#define RT_THREAD_RUNNING               0x03                /**< Running status */
+#define RT_THREAD_BLOCK                 RT_THREAD_SUSPEND   /**< Blocked status */
+#define RT_THREAD_CLOSE                 0x04                /**< Closed status */
+
+#define RT_THREAD_STAT_MASK             0x0f
+#define RT_THREAD_STAT_SIGNAL           0x10
+#define RT_THREAD_STAT_SIGNAL_READY     (RT_THREAD_STAT_SIGNAL | RT_THREAD_READY)
+#define RT_THREAD_STAT_SIGNAL_SUSPEND   0x20
+#define RT_THREAD_STAT_SIGNAL_MASK      0xf0
+
+/**
  * Thread structure
  */
 struct rt_thread
@@ -206,6 +222,13 @@ struct rt_thread
     rt_uint32_t stack_size;         /**< stack size */
 
     rt_ubase_t remaining_tick;      /**< remaining tick */
+
+    rt_uint8_t current_priority;    /**< current priority*/
+    rt_uint8_t init_priority;       /**< initialized priority */
+    rt_uint32_t number_mask;        /**< number mask of thread priority */
+
+    rt_err_t error;                 /**< error code */
+    rt_uint8_t stat;                /**< state of thread */
 };
 typedef struct rt_thread *rt_thread_t;
 
