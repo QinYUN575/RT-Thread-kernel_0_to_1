@@ -177,14 +177,45 @@ struct rt_object_information
     rt_size_t   object_size;        /**< object size */
 };
 
+#ifndef RT_TIMER_SKIP_LIST_LEVEL
+    #define RT_TIMER_SKIP_LIST_LEVEL    1
+#endif
+
+/* 1 or 3 */
+#ifndef RT_TIMER_SKIP_LIST_MASK
+    #define RT_TIMER_SKIP_LIST_MASK     0x03
+#endif
+
+
 /**
  * Timer structure
  */
 struct rt_timer
 {
     struct rt_object parent;
+    rt_list_t row[RT_TIMER_SKIP_LIST_LEVEL];
+    void (*timeout_func)(void *parameter);
+    void *parameter;
+    rt_tick_t init_tick;
+    rt_tick_t timeout_tick;
 };
 typedef struct rt_timer *rt_timer_t;
+
+#define RT_TICK_MAX                 0xFFFFFFFF
+
+#define RT_TIMER_FLAG_DEACTIVATED   0x0
+#define RT_TIMER_FLAG_ACTIVATED     0x1
+#define RT_TIMER_FLAG_ONE_SHOT      0x0
+#define RT_TIMER_FLAG_PERIODIC      0x3
+
+#define RT_TIMER_FLAG_HARD_TIMER    0x0
+#define RT_TIMER_FLAG_SOFT_TIMER    0x4
+
+#define RT_TIMER_CTRL_SET_TIME      0x0
+#define RT_TIMER_CTRL_GET_TIME      0x1
+#define RT_TIMER_CTRL_SET_ONESHOT   0x2
+#define RT_TIMER_CTRL_SET_PERIODIC  0x3
+
 
 /**
  * Thread state definitions
@@ -229,6 +260,8 @@ struct rt_thread
 
     rt_err_t error;                 /**< error code */
     rt_uint8_t stat;                /**< state of thread */
+
+    struct rt_timer thread_timer;   /**< timer of thread */
 };
 typedef struct rt_thread *rt_thread_t;
 

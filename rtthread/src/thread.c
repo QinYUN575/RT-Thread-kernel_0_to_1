@@ -46,12 +46,19 @@ rt_err_t rt_thread_init(struct rt_thread *thread,
     thread->sp = (void *)rt_hw_stack_init(thread->entry,
                                           thread->parameter,
                                           (void *)((char *)thread->stack_addr + thread->stack_size - 4));
-    
+
     thread->init_priority = priority;
     thread->current_priority = priority;
     thread->number_mask = 0;
     thread->error = RT_EOK;
     thread->stat = RT_THREAD_INIT;
+
+    rt_timer_init(&(thread->thread_timer),
+                  thread->name,
+                  rt_thread_timeout,
+                  thread,
+                  0,
+                  RT_TIMER_FLAG_ONE_SHOT);
 
     return RT_EOK;
 }
@@ -59,14 +66,6 @@ rt_err_t rt_thread_init(struct rt_thread *thread,
 void rt_thread_delay(rt_tick_t tick)
 {
 #if 0
-    struct rt_thread *thread;
-
-    thread = rt_current_thread;
-    thread->remaining_tick = tick;
-
-    rt_schedule();
-
-#else
     register rt_base_t level;
     struct rt_thread *thread;
 
@@ -80,6 +79,8 @@ void rt_thread_delay(rt_tick_t tick)
 
     rt_hw_interrupt_enable(level);
     rt_schedule();
+#else
+    rt_thread_sleep(tick);
 #endif
 }
 
@@ -119,6 +120,48 @@ rt_err_t rt_thread_startup(rt_thread_t thread)
     {
         rt_schedule();
     }
+
+    return RT_EOK;
+}
+
+void rt_thread_timeout(void *parameter)
+{
+    struct rt_thread *thread;
+    thread = (rt_thread_t)parameter;
+
+    thread->error = -RT_ETIMEOUT;
+    rt_list_remove(&(thread->tlist));
+
+    rt_schedule_insert_thread(thread);
+    rt_schedule();
+}
+
+rt_err_t rt_thread_sleep(rt_tick_t tick)
+{
+    register rt_base_t level;
+    struct rt_thread *thread;
+    level = rt_hw_interrupt_disable();
+    thread = rt_current_thread;
+    rt_thread_suspend(thread);
+    rt_timer_control(&(thread->thread_timer), RT_TIMER_CTRL_SET_TIME, &tick);
+    rt_timer_start(&(thread->thread_timer));
+    rt_hw_interrupt_enable(level);
+
+    rt_schedule();
+    return RT_EOK;
+}
+
+rt_err_t rt_thread_suspend(struct rt_thread *thread)
+{
+    register rt_base_t level;
+
+    level = rt_hw_interrupt_disable();
+
+    thread->stat = RT_THREAD_SUSPEND;
+    rt_schedule_remove_thread(thread);
+    rt_timer_stop(&(thread->thread_timer));
+
+    rt_hw_interrupt_enable(level);
 
     return RT_EOK;
 }

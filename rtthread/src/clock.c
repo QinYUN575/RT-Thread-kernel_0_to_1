@@ -16,6 +16,7 @@ static rt_tick_t rt_tick = 0;
 extern rt_list_t rt_thread_priority_table[RT_THREAD_PRIORITY_MAX];
 extern rt_uint32_t rt_thread_ready_priority_group;
 
+#if 0
 void rt_tick_increase(void)
 {
     rt_ubase_t i;
@@ -51,4 +52,16 @@ void rt_tick_increase(void)
     }
 #endif
     rt_schedule();
+}
+#else
+void rt_tick_increase(void)
+{
+    ++rt_tick;
+    rt_timer_check();
+}
+#endif
+
+rt_tick_t rt_tick_get(void)
+{
+    return rt_tick;
 }

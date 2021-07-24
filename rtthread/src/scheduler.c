@@ -15,7 +15,6 @@ struct rt_thread *rt_current_thread;
 rt_uint32_t rt_thread_ready_priority_group;
 rt_uint8_t rt_current_priority;
 
-
 rt_list_t rt_thread_priority_table[RT_THREAD_PRIORITY_MAX];
 extern struct rt_thread idle;
 
@@ -48,8 +47,7 @@ void rt_system_scheduler_start(void)
 #else
     register struct rt_thread *to_thread;
     register rt_ubase_t highest_ready_priority;
-                              
-    /* 获取就绪的最高优先级 */
+
     highest_ready_priority = __rt_ffs(rt_thread_ready_priority_group) - 1;
     to_thread = rt_list_entry(rt_thread_priority_table[highest_ready_priority].next,
                               struct rt_thread,
@@ -59,7 +57,6 @@ void rt_system_scheduler_start(void)
     rt_hw_context_switch_to((rt_uint32_t)&to_thread->sp);
 #endif
 }
-
 
 void rt_schedule_insert_thread(struct rt_thread *thread)
 {
@@ -103,8 +100,8 @@ void rt_schedule(void)
     {
         highest_ready_priority = __rt_ffs(rt_thread_ready_priority_group) - 1;
         to_thread = rt_list_entry(rt_thread_priority_table[highest_ready_priority].next,
-                                struct rt_thread,
-                                tlist);
+                                  struct rt_thread,
+                                  tlist);
 
         if (to_thread != rt_current_thread)
         {
