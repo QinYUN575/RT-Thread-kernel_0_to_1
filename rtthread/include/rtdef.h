@@ -252,6 +252,7 @@ struct rt_thread
     void *stack_addr;               /**< stack address */
     rt_uint32_t stack_size;         /**< stack size */
 
+    rt_ubase_t init_tick;           /**< initialize tick */
     rt_ubase_t remaining_tick;      /**< remaining tick */
 
     rt_uint8_t current_priority;    /**< current priority*/

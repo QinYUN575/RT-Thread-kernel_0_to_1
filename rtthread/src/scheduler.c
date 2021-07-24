@@ -35,16 +35,6 @@ void rt_system_scheduler_init(void)
 
 void rt_system_scheduler_start(void)
 {
-#if 0
-    register struct rt_thread *to_thread;
-
-    to_thread = rt_list_entry(rt_thread_priority_table[0].next,
-                              struct rt_thread,
-                              tlist);
-    rt_current_thread = to_thread;
-
-    rt_hw_context_switch_to((rt_uint32_t)&to_thread->sp);
-#else
     register struct rt_thread *to_thread;
     register rt_ubase_t highest_ready_priority;
 
@@ -55,7 +45,6 @@ void rt_system_scheduler_start(void)
 
     rt_current_thread = to_thread;
     rt_hw_context_switch_to((rt_uint32_t)&to_thread->sp);
-#endif
 }
 
 void rt_schedule_insert_thread(struct rt_thread *thread)
